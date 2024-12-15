@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?php echo $__env->yieldContent('title'); ?> | E-Business Society</title>
+    <link rel="shortcut icon" href="<?php echo e(asset('ftco-32x32.png')); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('css/dashboard.min.css')); ?>" />
+    
+    <style>
+      .star.active{
+        color: #83D504;
+      }
+    </style>
+    <style>
+      .pic-in-table{
+        height: 30px;
+        width: 30px;
+        min-width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: solid 1px #e7e7e7;
+        overflow: hidden;
+        background: #e7e7e7;
+      }
+      .pic-in-table img{
+        height: 100%;
+      }
+    </style>
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="<?php echo e(route('home')); ?>" class="text-nowrap logo-img">
+            <img src="<?php echo e(asset('images/logo-2.png')); ?>" width="180" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Home</span>
+            </li>
+
+            <?php if(isset($user) && ($user->isAdmin() || $user->isBusinessOwner())): ?>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="<?php echo e(route('dashboard.overview')); ?>" aria-expanded="false">
+                    <span>
+                    <i class="ti ti-layout-dashboard"></i>
+                    </span>
+                    <span class="hide-menu">Overview</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="<?php echo e(route('businesses.index')); ?>" aria-expanded="false">
+                <span>
+                    <i class="ti ti-building"></i>
+                </span>
+                <span class="hide-menu">Businesses</span>
+              </a>
+            </li>
+
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="<?php echo e(route('dashboard.reviews')); ?>" aria-expanded="false">
+                <span>
+                  <i class="ti ti-stars"></i>
+                </span>
+                <span class="hide-menu">Reviews</span>
+              </a>
+            </li>
+            <?php endif; ?>
+
+            <?php if(isset($user) && $user->isAdmin()): ?>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="<?php echo e(route('categories.index')); ?>" aria-expanded="false">
+                <span>
+                  <i class="ti ti-category"></i>
+                </span>
+                <span class="hide-menu">Categories</span>
+              </a>
+            </li>
+            <?php endif; ?>
+
+            <?php if(isset($user) && ($user->isAdmin())): ?>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="<?php echo e(route('dashboard.users')); ?>" aria-expanded="false">
+                <span>
+                  <i class="ti ti-users"></i>
+                </span>
+                <span class="hide-menu">Users</span>
+              </a>
+            </li>
+            <?php endif; ?>
+
+            <?php if(isset($user) && ($user->isAdmin() || $user->isBusinessOwner())): ?>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="<?php echo e(route('dashboard.reports')); ?>" aria-expanded="false">
+                <span>
+                    <i class="ti ti-clipboard-data"></i>
+                </span>
+                <span class="hide-menu">Reports</span>
+              </a>
+            </li>
+            <?php endif; ?>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="<?php echo e(route('dashboard.settings')); ?>" aria-expanded="false">
+                <span>
+                    <i class="ti ti-settings-2"></i>
+                </span>
+                <span class="hide-menu">Settings</span>
+              </a>
+            </li>
+            <?php if(auth()->guard()->check()): ?>
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">AUTH</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="<?php echo e(route('logout')); ?>" aria-expanded="false" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <span>
+                  <i class="ti ti-logout"></i>
+                </span>
+                <span class="hide-menu">Logout</span>
+                <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display: none;">
+                    <?php echo csrf_field(); ?>
+                </form>
+              </a>
+            </li>
+            <?php endif; ?>
+          </ul>
+
+          <!-- <div class="unlimited-access hide-menu bg-light-primary position-relative mb-7 mt-5 rounded">
+            <div class="d-flex">
+              <div class="unlimited-access-title me-3">
+                <h6 class="fw-semibold fs-4 mb-6 text-dark w-85">Upgrade to pro</h6>
+                <a href="https://adminmart.com/product/modernize-bootstrap-5-admin-template/" target="_blank" class="btn btn-primary fs-2 fw-semibold lh-sm">Buy Pro</a>
+              </div>
+              <div class="unlimited-access-img">
+                <img src="<?php echo e(asset('images/backgrounds/rocket.png')); ?>" alt="" class="img-fluid">
+              </div>
+            </div>
+          </div> -->
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <!--  Sidebar End -->
+
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+        <!--  Header Start -->
+        <header class="app-header">
+            <nav class="navbar navbar-expand-lg navbar-light">
+            <ul class="navbar-nav">
+                <li class="nav-item d-block d-xl-none">
+                    <a class="nav-link sidebartoggler nav-icon-hover" id="headerCollapse" href="javascript:void(0)">
+                        <i class="ti ti-menu-2"></i>
+                    </a>
+                </li>
+                <li class="nav-item d-block">
+                    <a class="nav-link" id="headerCollapse" href="<?php echo e(route('home')); ?>">
+                        <i class="ti ti-home"></i>
+                    </a>
+                </li>
+            </ul>
+            <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+                <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+                    <li style="cursor:pointer;" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"><?php echo e(Auth::user()->name); ?></li> <!-- User Name -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                            <img src="<?php echo e(asset('images/profile/user-1.jpg')); ?>" alt="" width="35" height="35" class="rounded-circle">
+                        </a>
+                        
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
+                            <div class="message-body">
+                                <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                                    <i class="ti ti-user fs-6"></i>
+                                    <p class="mb-0 fs-3">My Profile</p>
+                                </a>
+                                
+                                <a href="<?php echo e(route('logout')); ?>" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                                <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display: none;">
+                                    <?php echo csrf_field(); ?>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            </nav>
+        </header>
+        <!--  Header End -->
+        <div class="container-fluid">
+            <!-- Contenu du dashboard -->
+            <?php echo $__env->yieldContent('content'); ?>
+        </div>
+    </div>
+  </div>
+  <script src="<?php echo e(asset('libs/jquery/dist/jquery.min.js')); ?>"></script>
+  <script src="<?php echo e(asset('libs/bootstrap/dist/js/bootstrap.bundle.min.js')); ?>"></script>
+  <script src="<?php echo e(asset('js/sidebarmenu.js')); ?>"></script>
+  <script src="<?php echo e(asset('js/app.min.js')); ?>"></script>
+  <script src="<?php echo e(asset('libs/apexcharts/dist/apexcharts.min.js')); ?>"></script>
+  <script src="<?php echo e(asset('libs/simplebar/dist/simplebar.js')); ?>"></script>
+  <script src="<?php echo e(asset('js/dashboard.js')); ?>"></script>
+</body>
+
+</html>
+<?php /**PATH /Applications/XAMPP/xamppfiles/htdocs/web/E-business-society/resources/views/layouts/dashboard-layout.blade.php ENDPATH**/ ?>
