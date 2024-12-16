@@ -46,7 +46,45 @@ class BusinessController extends Controller
         return view('dashboard.businesses.index', compact('businesses', 'user', 'search'));
     }
 
+    public function search(Request $request)
+    {
+        // Validation des entrées
+        $validated = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'category' => 'nullable|exists:categories,id',
+            'location' => 'nullable|string|max:255',
+        ]);
 
+        // Construction de la requête
+        $query = Business::query();
+
+        if ($request->filled('name')) {
+            $query->where('business_name', 'like', '%' . $validated['name'] . '%');
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category_id', $validated['category']);
+        }
+
+        if ($request->filled('location')) {
+            $query->where('address', 'like', '%' . $validated['location'] . '%');
+        }
+
+        // Chargement des entreprises avec pagination
+        $businesses = $query->paginate(10)->onEachSide(2); // Retourne 10 résultats par page
+
+        // Récupération des catégories principales
+        $categories = Category::all();
+
+        // Récupère les 6 catégories les plus populaires (par nombre d'entreprises)
+        $topCategories = Category::withCount('businesses')
+            ->orderByDesc('businesses_count') // Tri par le nombre d'entreprises
+            ->take(6) // Limite à 6 résultats
+            ->get();
+
+        // Retourne la vue avec les données
+        return view('business.search', compact('businesses', 'categories', 'topCategories'));
+    }
 
     // Affiche le formulaire de création d'une nouvelle entreprise
     public function create()

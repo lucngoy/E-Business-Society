@@ -1,28 +1,26 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Listings'); ?>
 
-@section('title', 'Listings')
+<?php $__env->startSection('sub-title', 'Discover Local Businesses Tailored to Your Needs'); ?>
 
-@section('sub-title', 'Discover Local Businesses Tailored to Your Needs')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <!-- Inclure sub-header de la page -->
-    @include('header-page')
+    <?php echo $__env->make('header-page', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
     <div class="site-section bg-light">
       <div class="container">
         <div class="row">
           <div class="col-lg-8">
-            @foreach ($businesses as $business)
+            <?php $__currentLoopData = $businesses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $business): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="d-block d-md-flex listing-horizontal">
 
-                    <a href="#" class="img d-block" style="background-image: url('{{ $business->image ? asset('storage/' . $business->image) : asset('images/default-img.png') }}')">
-                        <span class="category">{{ $business->category->category_name }}</span>
+                    <a href="#" class="img d-block" style="background-image: url('<?php echo e($business->image ? asset('storage/' . $business->image) : asset('images/default-img.png')); ?>')">
+                        <span class="category"><?php echo e($business->category->category_name); ?></span>
                     </a>
 
                     <div class="lh-content">
                         <!-- <a href="" class="bookmark"><span class="icon-heart"></span></a> -->
-                        <h3><a href="{{ route('business.show', $business->id) }}">{{ $business->business_name }}</a></h3>
-                        <p>{{ $business->address }}</p>
+                        <h3><a href="<?php echo e(route('business.show', $business->id)); ?>"><?php echo e($business->business_name); ?></a></h3>
+                        <p><?php echo e($business->address); ?></p>
                         <!-- <p>
                             <span class="icon-star text-warning"></span>
                             <span class="icon-star text-warning"></span>
@@ -33,19 +31,20 @@
                         </p> -->
 
                         <p>
-                            @for ($i = 0; $i < 5; $i++)
-                                <span class="icon-star {{ $i < (int)$business->reviews_avg_rating ? 'text-warning' : 'text-secondary' }}"></span>
-                            @endfor
-                            <span>({{ $business->reviews_count }} Reviews)</span>
+                            <?php for($i = 0; $i < 5; $i++): ?>
+                                <span class="icon-star <?php echo e($i < (int)$business->reviews_avg_rating ? 'text-warning' : 'text-secondary'); ?>"></span>
+                            <?php endfor; ?>
+                            <span>(<?php echo e($business->reviews_count); ?> Reviews)</span>
                         </p>
 
                     </div>
                 </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
             <!-- Pagination -->
             <div class="pagination">
-                {{ $businesses->links('pagination::default') }}
+                <?php echo e($businesses->links('pagination::default')); ?>
+
             </div>
 
           </div>
@@ -136,8 +135,9 @@
     </div>
 
     <!-- Inclure la section categorie populaire -->
-    @include('popular-categories')
+    <?php echo $__env->make('popular-categories', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
     <!-- Inclure la section appel a l'action -->
-    @include('call-to-action')
-@endsection
+    <?php echo $__env->make('call-to-action', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /Applications/XAMPP/xamppfiles/htdocs/web/E-business-society/resources/views/listings.blade.php ENDPATH**/ ?>

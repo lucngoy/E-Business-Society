@@ -48,11 +48,11 @@
                 </li> -->
 
                 <li class="has-children">
-                    <a href="#"><span>Businesses</span></a>
+                    <a><span>Businesses</span></a>
                     <ul class="dropdown">
                         <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                           <li>
-                              <a href="#"><?php echo e($category->category_name); ?></a>
+                              <a href="<?php echo e(route('business.search', ['category' => $category->id])); ?>"><?php echo e($category->category_name); ?></a>
                           </li>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </ul>

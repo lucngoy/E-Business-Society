@@ -12,4 +12,10 @@ class Category extends Model
     protected $table = 'categories'; // Spécifiez explicitement la table
 
     protected $fillable = ['id', 'category_name'];
+
+    public function businesses()
+    {
+        return $this->hasMany(Business::class);
+    }
+
 }

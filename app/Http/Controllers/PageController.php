@@ -11,10 +11,16 @@ class PageController extends Controller
 {
     public function home()
     {
-        // Récupère les catégories principales
+        // Récupère toutes les catégories pour le header
         $categories = Category::all();
-        
-        return view('home', compact('categories'));
+
+        // Récupère les 6 catégories les plus populaires (par nombre d'entreprises)
+        $topCategories = Category::withCount('businesses')
+            ->orderByDesc('businesses_count') // Tri par le nombre d'entreprises
+            ->take(6) // Limite à 6 résultats
+            ->get();
+
+        return view('home', compact('categories', 'topCategories'));
     }
 
     public function listings()

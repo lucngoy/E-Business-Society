@@ -48,11 +48,11 @@
                 </li> -->
 
                 <li class="has-children">
-                    <a href="#"><span>Businesses</span></a>
+                    <a><span>Businesses</span></a>
                     <ul class="dropdown">
                         @foreach($categories as $category)
                           <li>
-                              <a href="#">{{ $category->category_name }}</a>
+                              <a href="{{ route('business.search', ['category' => $category->id]) }}">{{ $category->category_name }}</a>
                           </li>
                         @endforeach
                     </ul>

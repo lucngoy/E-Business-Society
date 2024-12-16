@@ -1,4 +1,4 @@
-<div class="site-section">
+<!-- <div class="site-section">
     <div class="container">
     <div class="row justify-content-center mb-5">
         <div class="col-md-7 text-center border-primary">
@@ -56,4 +56,36 @@
         <div class="col-md-4"><a href="#" class="btn btn-block btn-outline-primary btn-md px-5">View All Categories</a></div>
     </div>
     </div>
-</div><?php /**PATH /Applications/XAMPP/xamppfiles/htdocs/web/E-business-society/resources/views/popular-categories.blade.php ENDPATH**/ ?>
+</div> -->
+
+<div class="site-section">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-7 text-center border-primary">
+                <h2 class="font-weight-light text-primary">Popular Categories</h2>
+                <p class="color-black-opacity-5">Find the best local businesses in each category.</p>
+            </div>
+        </div>
+
+        <div class="row align-items-stretch">
+            <?php $__currentLoopData = $topCategories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="col-6 col-sm-6 col-md-4 mb-4 mb-lg-0 col-lg-2">
+                    <a href="<?php echo e(route('business.search', ['category' => $category->id])); ?>" class="popular-category h-100">
+                        <span class="icon mb-3">
+                            <span class="flaticon-<?php echo e($category->icon ?? 'hotel'); ?>"></span>
+                        </span>
+                        <span class="caption mb-2 d-block"><?php echo e($category->category_name); ?></span>
+                        <span class="number"><?php echo e(number_format($category->businesses_count)); ?></span>
+                    </a>
+                </div>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </div>
+
+        <!-- <div class="row mt-5 justify-content-center tex-center">
+            <div class="col-md-4">
+                <a href="" class="btn btn-block btn-outline-primary btn-md px-5">View All Categories</a>
+            </div>
+        </div> -->
+    </div>
+</div>
+<?php /**PATH /Applications/XAMPP/xamppfiles/htdocs/web/E-business-society/resources/views/popular-categories.blade.php ENDPATH**/ ?>

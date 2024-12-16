@@ -15,41 +15,43 @@
                         </div>
                     </div>
 
+                    <!-- ############### Search -->
                     <div class="form-search-wrap p-2" data-aos="fade-up" data-aos-delay="200">
-                        <form method="post">
+                      <form action="<?php echo e(route('business.search')); ?>" method="GET">
                         <div class="row align-items-center">
-                            <div class="col-lg-12 col-xl-4 no-sm-border border-right">
-                            <input type="text" class="form-control" placeholder="What are you looking for?">
-                            </div>
-                            <div class="col-lg-12 col-xl-3 no-sm-border border-right">
+                          <div class="col-lg-12 col-xl-4 no-sm-border border-right">
+                            <input type="text" class="form-control" name="name" placeholder="Search by business name">
+                          </div>
+
+                          <div class="col-lg-12 col-xl-3 no-sm-border border-right">
                             <div class="wrap-icon">
                                 <span class="icon icon-room"></span>
-                                <input type="text" class="form-control" placeholder="Location">
+                                <input type="text" class="form-control" name="location" placeholder="Search by location">
                             </div>
-                            
-                            </div>
-                            <div class="col-lg-12 col-xl-3">
+                          </div>
+
+                          <div class="col-lg-12 col-xl-3">
                             <div class="select-wrap">
-                                <span class="icon"><span class="icon-keyboard_arrow_down"></span></span>
-                                  <select class="form-control" name="" id="">
-                                      <option value="">All Categories</option>
+                              <span class="icon">
+                                <span class="icon-keyboard_arrow_down"></span>
+                              </span>
 
-                                      <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                          <?php if(is_null($category->parent_id)): ?> <!-- Vérifie si parent_id est null -->
-                                              <option value="<?php echo e($category->category_name); ?>"><?php echo e($category->category_name); ?></option>
-                                          <?php endif; ?>
-                                      <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                </select>
+                              <select class="form-control" name="category">
+                                <option value="">Select category</option>
+                                <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($category->id); ?>"><?php echo e($category->category_name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                              </select>
                             </div>
-                            </div>
-                            <div class="col-lg-12 col-xl-2 ml-auto text-right">
+                          </div>
+
+                          <div class="col-lg-12 col-xl-2 ml-auto text-right">
                             <input type="submit" class="btn text-white btn-primary" value="Search">
-                            </div>
-                            
+                          </div>
                         </div>
-                        </form>
+                      </form>
                     </div>
-
+                    <!--  -->
                 </div>
             </div>
         </div>

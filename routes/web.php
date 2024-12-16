@@ -14,6 +14,8 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/listings', [PageController::class, 'listings'])->name('listings');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+Route::get('/search', [BusinessController::class, 'search'])->name('business.search');
+
 
 // routes pour les avis
 Route::get('/business/{business}', [BusinessController::class, 'show'])->name('business.show');
