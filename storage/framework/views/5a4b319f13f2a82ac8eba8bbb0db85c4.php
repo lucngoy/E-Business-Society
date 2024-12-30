@@ -7,13 +7,32 @@
     <title><?php echo $__env->yieldContent('title'); ?> | E-Business Society</title>
     <link rel="shortcut icon" href="<?php echo e(asset('ftco-32x32.png')); ?>">
     <link rel="stylesheet" href="<?php echo e(asset('css/dashboard.min.css')); ?>" />
+    <style>
+      /* dropdown btn */
+      .dropdown-menu {
+        display: none; /* Cache par défaut */
+      }
+
+      .dropdown-menu.show {
+        display: block; /* Affiche lorsque la classe "show" est ajoutée */
+        position: absolute; /* Maintient l'affichage dans la position correcte */
+        will-change: transform; /* Optimisation des animations */
+        top: 100%; /* Position sous le bouton */
+        right: 0; /* Aligné à gauche */
+        z-index: 1000; /* Assure la priorité d'affichage */
+      }
+
+      .dropdown-divider{
+        border-top: solid 1px #e7e7e7;
+      }
+    </style>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
       .star.active{
         color: #83D504;
       }
-    </style>
-    <style>
       .pic-in-table{
         height: 30px;
         width: 30px;
@@ -30,6 +49,7 @@
         height: 100%;
       }
     </style>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script> -->
 </head>
 
 <body>
@@ -109,15 +129,31 @@
             </li>
             <?php endif; ?>
 
-            <?php if(isset($user) && ($user->isAdmin() || $user->isBusinessOwner())): ?>
+
             <li class="sidebar-item">
+              <a class="sidebar-link" href="<?php echo e(route('notifications.index')); ?>" aria-expanded="false">
+                <span>
+                    <i class="ti ti-bell"></i>
+                </span>
+                <span class="hide-menu">
+                  Notifications (<?php echo e($totalNotifications ?? 0); ?>)
+                </span>
+
+                <?php if($totalNotifications > 0): ?>
+                  <div class="notification bg-primary rounded-circle"></div>
+                <?php endif; ?>
+              </a>
+            </li>
+
+            <?php if(isset($user) && ($user->isAdmin())): ?>
+            <!-- <li class="sidebar-item">
               <a class="sidebar-link" href="<?php echo e(route('dashboard.reports')); ?>" aria-expanded="false">
                 <span>
                     <i class="ti ti-clipboard-data"></i>
                 </span>
                 <span class="hide-menu">Reports</span>
               </a>
-            </li>
+            </li> -->
             <?php endif; ?>
 
             <li class="sidebar-item">
@@ -181,6 +217,16 @@
                         <i class="ti ti-home"></i>
                     </a>
                 </li>
+
+                <li class="nav-item d-block">
+                    <a class="nav-link" id="headerCollapse" href="<?php echo e(route('notifications.index')); ?>">
+                      <i class="ti ti-bell-ringing"></i>
+                      <?php if($totalNotifications > 0): ?>
+                        <div class="notification bg-primary rounded-circle"></div>
+                      <?php endif; ?>
+                    </a>
+                </li>
+
             </ul>
             <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
                 <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
@@ -190,14 +236,14 @@
                         aria-expanded="false">
                             <img src="<?php echo e(asset('images/profile/user-1.jpg')); ?>" alt="" width="35" height="35" class="rounded-circle">
                         </a>
-                        
+
                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
                             <div class="message-body">
-                                <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                                    <i class="ti ti-user fs-6"></i>
-                                    <p class="mb-0 fs-3">My Profile</p>
+                                <a href="<?php echo e(route('dashboard.settings')); ?>" class="d-flex align-items-center gap-2 dropdown-item">
+                                    <i class="ti ti-settings-2 fs-6"></i>
+                                    <p class="mb-0 fs-3">Setting</p>
                                 </a>
-                                
+
                                 <a href="<?php echo e(route('logout')); ?>" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
                                 <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display: none;">
                                     <?php echo csrf_field(); ?>
@@ -216,6 +262,7 @@
         </div>
     </div>
   </div>
+
   <script src="<?php echo e(asset('libs/jquery/dist/jquery.min.js')); ?>"></script>
   <script src="<?php echo e(asset('libs/bootstrap/dist/js/bootstrap.bundle.min.js')); ?>"></script>
   <script src="<?php echo e(asset('js/sidebarmenu.js')); ?>"></script>
@@ -223,6 +270,64 @@
   <script src="<?php echo e(asset('libs/apexcharts/dist/apexcharts.min.js')); ?>"></script>
   <script src="<?php echo e(asset('libs/simplebar/dist/simplebar.js')); ?>"></script>
   <script src="<?php echo e(asset('js/dashboard.js')); ?>"></script>
+  <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.min.js"></script>
+
+  <!-- Btn dropdown -->
+  <script>
+    $('.dropdown-toggle').on('click', function (event) {
+      event.preventDefault(); // Empêche tout comportement par défaut (facultatif)
+      $(this).next('.dropdown-menu').toggleClass('show');
+    });
+    
+    $(document).on('click', function (event) {
+      if (!$(event.target).closest('.btn-group').length) {
+          $('.dropdown-menu').removeClass('show');
+      }
+    });
+  </script>
+
+  <script>
+    $('#myTable').DataTable({
+        responsive: true,
+        paging: false,  // Désactive la pagination
+        searching: false,  // Désactive la recherche
+        order: []  // Aucun tri par défaut
+    });
+
+    $('#myTable2').DataTable({
+        responsive: true,
+        paging: false,  // Désactive la pagination
+        searching: false,  // Désactive la recherche
+        order: []  // Aucun tri par défaut
+    });
+
+  </script>
+
+  <!-- <script>
+    // Filter listing using ajax
+    $(document).ready(function() {
+        $('#filterForm input, #filterForm select').on('change input', function() {
+            const form = $('#filterForm');
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: form.serialize(),
+                beforeSend: function() {
+                    // Affichez un indicateur de chargement
+                    $('#results').html('<p>Loading...</p>');
+                },
+                success: function(response) {
+                    // Mettez à jour les résultats avec la réponse
+                    $('#results').html($(response).find('#results').html());
+                },
+                error: function() {
+                    $('#results').html('<div class="alert alert-warning" role="alert">Something went wrong. Please try again.</div>');
+                }
+            });
+        });
+    });
+  </script> -->
 </body>
 
 </html>

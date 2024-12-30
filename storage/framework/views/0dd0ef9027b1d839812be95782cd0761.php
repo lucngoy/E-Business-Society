@@ -61,7 +61,7 @@
                             </div>
                         <?php else: ?>
                             <div class="table-responsive">
-                                <table class="table text-nowrap mb-0 align-middle">
+                                <table id="myTable" class="table table-bordered table-striped mb-0" style="width:100%">
                                     <thead class="text-dark fs-4">
                                     <tr>
                                         <th class="border-bottom-0">

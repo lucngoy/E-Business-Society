@@ -2,9 +2,8 @@
 
 @section('title', 'Research')
 
-@section('sub-title', 'Discover Local Businesses Tailored to Your Needs')
-
 @section('content')
+    <!-- #################################### -->
     <div class="site-blocks-cover inner-page-cover overlay" style="background-image: url('{{ asset('images/hero_1.jpg') }}');" data-aos="fade" data-stellar-background-ratio="0.5">
         <div class="container">
             <div class="row align-items-center justify-content-center text-center">
@@ -54,10 +53,15 @@
         </div>
     </div>
 
+    <!-- -------------------------------- -->
+
+
+
+
     <div class="site-section bg-light">
       <div class="container">
         <div class="row">
-          <div class="col-lg-8">
+          <div class="col-lg-12">
             @if ($businesses->isEmpty())
                 <div class="alert alert-warning" role="alert">
                     No businesses found matching your search criteria.
@@ -93,7 +97,7 @@
             @endif
 
           </div>
-          <div class="col-lg-3 ml-auto">
+          <!-- <div class="col-lg-3 ml-auto">
 
             <div class="mb-5">
               <h3 class="h5 text-black mb-3">Filters</h3>
@@ -116,7 +120,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                  <!-- select-wrap, .wrap-icon -->
+                  
                   <div class="wrap-icon">
                     <span class="icon icon-room"></span>
                     <input type="text" placeholder="Location" class="form-control">
@@ -173,7 +177,7 @@
               </form>
             </div>
 
-          </div>
+          </div> -->
 
         </div>
       </div>

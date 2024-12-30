@@ -6,9 +6,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Notification;
+
+// Models
 use App\Models\Review;
 use App\Models\Business;
 use App\Models\Category;
+use App\Models\User;
+
+// Notification
+use App\Notifications\BusinessStatusUpdated;
+use App\Notifications\NewBusinessPostedForUser;
+use App\Notifications\NewBusinessPostedForAdmin;
+use App\Notifications\BusinessDeletedByAdmin;
+use App\Notifications\BusinessDeletedByOwner;
 
 class BusinessController extends Controller
 {
@@ -28,23 +39,44 @@ class BusinessController extends Controller
         }
 
         $search = $request->input('search');
+        $status = $request->input('status');
 
         $businesses = Business::query()
             ->latest()
-            ->where('business_name', 'like', "%{$search}%")
-            ->orWhere('description', 'like', "%{$search}%")
-            ->orWhere('website', 'like', "%{$search}%")
-            ->orWhere('phone', 'like', "%{$search}%")
-            ->orWhere('address', 'like', "%{$search}%")
-            ->with('category')
+            ->with(['category', 'user']) // Chargez les relations nécessaires
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($subQuery) use ($search) {
+                    $subQuery->where('business_name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhere('website', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhere('address', 'like', "%{$search}%")
+                        ->orWhereHas('category', function ($categoryQuery) use ($search) {
+                            $categoryQuery->where('category_name', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('user', function ($userQuery) use ($search) {
+                            $userQuery->where('role', 'like', "%{$search}%");
+                            $userQuery->orWhere('name', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->when($status, function ($query) use ($status) {
+                $query->where('status', $status);
+            })
             ->when(!$user->isAdmin(), function ($query) use ($user) {
-                $query->where('user_id', $user->id); // Filtrer les entreprises selon l'utilisateur connecté
+                // Si pas admin afficher uniquement les entreprises lui appartenant
+                $query->where('user_id', $user->id);
             })
             ->paginate(10)
-            ->onEachSide(2); // Remplacez '10' par le nombre d'éléments par page
+            ->onEachSide(2);
 
-        return view('dashboard.businesses.index', compact('businesses', 'user', 'search'));
+        // Total des notifications
+        $totalNotifications = $user->unreadNotifications()->count();
+
+        return view('dashboard.businesses.index', compact('businesses', 'user', 'search', 'status','totalNotifications'));
     }
+
+
 
     public function search(Request $request)
     {
@@ -71,7 +103,7 @@ class BusinessController extends Controller
         }
 
         // Chargement des entreprises avec pagination
-        $businesses = $query->paginate(10)->onEachSide(2); // Retourne 10 résultats par page
+        $businesses = $query->orderByDesc('id')->paginate(10)->onEachSide(2); // Retourne 10 résultats par page
 
         // Récupération des catégories principales
         $categories = Category::all();
@@ -89,17 +121,26 @@ class BusinessController extends Controller
     // Affiche le formulaire de création d'une nouvelle entreprise
     public function create()
     {
-        // Récupérer toutes les catégories avec leurs sous-catégories
-        $categories = Category::all();
+        $user = Auth::user();
 
-        return view('dashboard.businesses.create', compact('categories')); // Passer les catégories à la vue
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Please log in to access this page.');
+        }
+        
+        // Total des notifications
+        $totalNotifications = $user->unreadNotifications()->count();
+
+        // Récupérer toutes les catégories avec leurs sous-catégories
+        $categories = Category::orderBy('category_name')->get();
+
+        return view('dashboard.businesses.create', compact('categories', 'totalNotifications')); // Passer les catégories à la vue
     }
 
     // Sauvegarde une nouvelle entreprise dans la base de données
     public function store(Request $request)
     {
         // Validation des données
-        $request->validate([
+        $validated = $request->validate([
             'business_name' => 'required|string|max:255',
             'category_id' => 'required|integer|exists:categories,id',
             'address' => 'required|string',
@@ -108,31 +149,58 @@ class BusinessController extends Controller
             'description' => 'nullable|string',
             'opening_hours' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validation pour une seule image
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
         ]);
 
-        // Traitement de l'image
+        // Traitement de l'image (si présente)
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('business_images', 'public'); // Dossier public/business_images
+            $imagePath = $request->file('image')->store('business_images', 'public'); // Stockage dans le dossier 'public/business_images'
         }
 
-        // Création de l'objet Business
-        $business = new Business([
-            'business_name' => $request->business_name,
-            'category_id' => $request->category_id,
-            'address' => $request->address,
-            'phone' => $request->phone,
-            'website' => $request->website,
-            'description' => $request->description,
-            'opening_hours' => $request->opening_hours,
-            'image' => $imagePath, // Enregistrer le chemin de l'image
-            'user_id' => Auth::id(), // L'utilisateur connecté
-        ]);
+        try {
+            // Déterminer le statut en fonction de l'utilisateur qui publie
+            $status = (Auth::user()->role == 'admin') ? 'approved' : 'pending'; // Si l'admin poste, statut "approved", sinon "pending" (ou toute autre valeur par défaut)
 
-        $business->save();
+            // Création du business
+            $business = new Business([
+                'business_name' => $validated['business_name'],
+                'category_id' => $validated['category_id'],
+                'address' => $validated['address'],
+                'phone' => $validated['phone'],
+                'website' => $validated['website'],
+                'description' => $validated['description'],
+                'opening_hours' => $validated['opening_hours'],
+                'image' => $imagePath, // Stockage du chemin de l'image
+                'user_id' => Auth::id(), // ID de l'utilisateur connecté
+                'latitude' => $validated['latitude'],
+                'longitude' => $validated['longitude'],
+                'status' => $status, // Assigner le statut ici
+            ]);
 
-        return redirect()->route('businesses.create')->with('success', 'Business added successfully.');
+            // Si nouveau business ajouté
+            if ($business->save()) {
+                // Notification à l'admin si l'utilisateur qui poste n'est pas l'admin
+                if (Auth::user()->role != 'admin') {
+                    $users = User::where('role', 'admin')->get();
+                    Notification::send($users, new NewBusinessPostedForAdmin($business));
+                }
+
+                // Notification à tous les utilisateurs sauf l'admin qui a posté
+                $users = User::where('role', 'user')->get();
+                Notification::send($users, new NewBusinessPostedForUser($business));
+            }
+
+            return redirect()->route('businesses.create')->with('success', 'Business added successfully.');
+        } catch (\Exception $e) {
+            // Gestion des erreurs (exemple générique, vous pouvez personnaliser selon vos besoins)
+            return back()->withErrors(['error' => 'An error has occurred. Please try again later.']);
+        }
     }
+
+
+
 
 
     // Affiche les détails d'une entreprise spécifique
@@ -144,7 +212,7 @@ class BusinessController extends Controller
 
         // Charger l'entreprise avec ses avis paginés
         $business = Business::with(['reviews.user'])->findOrFail($id);
-        
+
         // Paginer les avis
         $reviews = Review::where('business_id', $business->id)
             ->latest()
@@ -166,9 +234,12 @@ class BusinessController extends Controller
             return redirect()->route('login')->with('error', 'Please log in to access this page.');
         }
 
-        $categories = Category::all();
+        // Total des notifications
+        $totalNotifications = $user->unreadNotifications()->count();
 
-        return view('dashboard.businesses.edit', compact('business', 'categories'));
+        $categories = Category::orderBy('category_name')->get();
+
+        return view('dashboard.businesses.edit', compact('business', 'categories', 'totalNotifications'));
     }
 
     // Met à jour les informations d'une entreprise dans la base de données
@@ -178,23 +249,28 @@ class BusinessController extends Controller
         $validatedData = $request->validate([
             'business_name' => 'required|string|max:255',
             'category_id' => 'required|integer|exists:categories,id',
-            'address' => 'required|string|max:500',
-            'phone' => 'required|string|max:20',
-            'website' => 'nullable|url|max:255',
-            'description' => 'nullable|string|max:1000',
-            'opening_hours' => 'nullable|string|max:500',
-            // Validation pour une image unique (décommenter si nécessaire)
-            // 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'address' => 'required|string',
+            'phone' => 'required|string',
+            'website' => 'nullable|url',
+            'description' => 'nullable|string',
+            'opening_hours' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validation pour une seule image
+            'latitude' => 'nullable|numeric', // Validation pour latitude
+            'longitude' => 'nullable|numeric', // Validation pour longitude
         ]);
 
-        // Si vous gérez l'upload d'image, décommentez ce bloc
-        // if ($request->hasFile('image')) {
-        //     // Supprimer l'ancienne image si nécessaire
-        //     if ($business->image) {
-        //         Storage::disk('public')->delete($business->image);
-        //     }
-        //     $validatedData['image'] = $request->file('image')->store('business_images', 'public'); // Enregistrer dans le dossier public/business_images
-        // }
+        // Si une nouvelle image est téléchargée
+        if ($request->hasFile('image')) {
+            // Supprimer l'ancienne image si nécessaire
+            if ($business->image) {
+                Storage::disk('public')->delete($business->image);
+            }
+            // Stocker la nouvelle image
+            $validatedData['image'] = $request->file('image')->store('business_images', 'public');
+        } else {
+            // Si aucune nouvelle image, retirer la clé 'image' pour ne pas écraser la valeur existante
+            unset($validatedData['image']);
+        }
 
         // Mise à jour des informations de l'entreprise
         $business->update($validatedData);
@@ -205,11 +281,41 @@ class BusinessController extends Controller
             ->with('success', 'Business updated successfully.');
     }
 
-    // Supprime une entreprise de la base de données
+    // Méthode pour changer le statut d'une entreprise
+    public function changeStatus(Request $request, Business $business)
+    {
+        $request->validate([
+            'status' => 'required|string|in:approved,rejected,pending,inactive',
+        ]);
+
+        // Mise à jour du statut de l'entreprise
+        $business->update(['status' => $request->status]);
+
+        // Notification au propriétaire de l'entreprise
+        $businessOwner = $business->user;
+        $businessOwner->notify(new BusinessStatusUpdated($business));
+
+        // Si l'entreprise est approuvée, notifier tous les utilisateurs
+        if ($request->status === 'approved') {
+            $users = User::where('role', 'user')->get();
+            Notification::send($users, new NewBusinessPostedForUser($business));
+        }
+
+        return redirect()->route('businesses.index')->with('success', 'Business status updated successfully.');
+    }
+
+
+
+
+
     public function destroy(Business $business)
     {
-        $businessOwner = $business->user; // Supposons que la relation est définie (Business appartient à User)
+        // Récupère le propriétaire de l'entreprise
+        $businessOwner = $business->user;
 
+        // Vérifie si l'utilisateur connecté est un admin ou le propriétaire
+        $isAdmin = Auth::user()->role == 'admin';
+        
         // Supprimer les images de l'entreprise si elles existent
         if ($business->image) {
             Storage::disk('public')->delete($business->image);
@@ -218,9 +324,17 @@ class BusinessController extends Controller
         // Supprimer l'entreprise
         $business->delete();
 
-        // Notifier le propriétaire
-        // $businessOwner->notify(new \App\Notifications\BusinessDeleted($business->business_name));
+        // Si c'est l'admin qui supprime, notifier le propriétaire
+        if ($isAdmin) {
+            $businessOwner->notify(new \App\Notifications\BusinessDeletedByAdmin($business));
+        } else {
+            // Si c'est le propriétaire qui supprime, notifier l'admin
+            $admins = User::where('role', 'admin')->get();
+            Notification::send($admins, new \App\Notifications\BusinessDeletedByOwner($business));
+        }
 
+        // Retourner une réponse avec un message de succès
         return redirect()->route('businesses.index')->with('success', 'Business deleted successfully');
     }
+
 }

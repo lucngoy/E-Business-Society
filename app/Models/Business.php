@@ -19,9 +19,12 @@ class Business extends Model
         'opening_hours',
         'image',
         'user_id',
+        'latitude',
+        'longitude',
+        'status',
     ];
 
-    
+
     // Relation : Un business a plusieurs reviews
     public function reviews()
     {

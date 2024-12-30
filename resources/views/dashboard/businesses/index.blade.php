@@ -29,6 +29,33 @@
             <div class="col-lg-12 d-flex align-items-stretch">
                 <div class="card w-100">
                     <div class="card-body p-4">
+                        <h5 class="card-title fw-semibold mb-4">Businesses Filter</h5>
+
+                        <form id="filterForm" method="GET" action="{{ route('businesses.index') }}">
+                            <div class="mb-3">
+                                <select class="form-control" name="status" onchange="applyFilter()">
+                                    <option value="">All Businesses</option>
+                                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending Businesses</option>
+                                    <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved Businesses</option>
+                                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected Businesses</option>
+                                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive Businesses</option>
+                                </select>
+                            </div>
+                        </form>
+                        <script>
+                            function applyFilter() {
+                                document.getElementById('filterForm').submit();
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12 d-flex align-items-stretch">
+                <div class="card w-100">
+                    <div class="card-body p-4">
                         <h5 class="card-title fw-semibold mb-4">Businesses List</h5>
 
                         @if ($businesses->isEmpty())
@@ -36,8 +63,8 @@
                                 No businesses found.
                             </div>
                         @else
-                            <div class="table-responsive">
-                                <table class="table text-nowrap mb-0 align-middle">
+                            <div class="table-responsive"><!-- table-responsive -->
+                                <table id="myTable" class="table table-bordered table-striped mb-0" style="width:100%"><!-- text-nowrap  -->
                                     <thead class="text-dark fs-4">
                                     <tr>
                                         <th class="border-bottom-0">
@@ -74,9 +101,9 @@
                                             <h6 class="fw-semibold mb-0">Phone</h6>
                                         </th>
 
-                                        <!-- <th class="border-bottom-0">
-                                            <h6 class="fw-semibold mb-0">Hours</h6>
-                                        </th> -->
+                                        <th class="border-bottom-0">
+                                            <h6 class="fw-semibold mb-0">Status</h6>
+                                        </th>
 
                                         <th class="border-bottom-0">
                                             <h6 class="fw-semibold mb-0">Actions</h6>
@@ -107,11 +134,11 @@
                                             </td>
 
                                             <td class="border-bottom-0">
-                                                <p class="mb-0 fw-normal">{{ Str::limit($business->description, 100) }}</p>
+                                                <p class="mb-0 fw-normal">{{ Str::limit($business->description, 50) }}</p>
                                             </td>
 
                                             <td class="border-bottom-0">
-                                                <a href="" class="mb-0 fw-normal">{{ Str::limit($business->description, 50) }}</a>
+                                                <a href="" class="mb-0 fw-normal">{{ Str::limit($business->address, 50) }}</a>
                                             </td>
 
                                             <td class="border-bottom-0">
@@ -122,26 +149,68 @@
                                                 <a href="tel:{{ $business->phone }}" class="mb-0 fw-normal">Call Now</a>
                                             </td>
 
-                                            <!-- <td class="border-bottom-0">
-                                                <p class="mb-0 fw-normal">
-                                                    dimanche	10:00–22:00
-                                                    lundi	08:00–22:00
-                                                    mardi	08:00–22:00
-                                                    mercredi	08:00–22:00
-                                                    jeudi	08:00–22:00
-                                                    vendredi	08:00–22:00
-                                                    samedi	10:00–22:00
-                                                </p>
-                                            </td> -->
+                                            <td class="border-bottom-0">
+                                                <p class="mb-0 fw-normal">{{ $business->status }}</p>
+                                            </td>
 
                                             <td class="border-bottom-0">
-                                                <a href="{{ route('businesses.show', $business) }}" class="btn btn-primary btn-sm">View</a>
-                                                <a href="{{ route('businesses.edit', $business) }}" class="btn btn-warning btn-sm">Edit</a>
-                                                <form action="{{ route('businesses.destroy', $business) }}" method="POST" style="display:inline-block;" onsubmit="return confirmDeletion(event);">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                                </form>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-primary dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                                                        Action
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a href="{{ route('businesses.show', $business) }}" class="dropdown-item">View</a>
+                                                        <a href="{{ route('businesses.edit', $business) }}" class="dropdown-item">Edit</a>
+
+                                                        <!-- Si l'admin peut approver ou rejeter la demande -->
+                                                        @if($user->isAdmin())
+                                                            <div class="dropdown-divider"></div>
+
+                                                            @if($business->status != 'approved')
+                                                            <form action="{{ route('businesses.changeStatus', $business) }}" method="POST" style="display:inline;">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <input type="hidden" name="status" value="approved">
+                                                                <button type="submit" class="dropdown-item">Set Approve</button>
+                                                            </form>
+                                                            @endif
+
+                                                            @if($business->status != 'rejected')
+                                                            <form action="{{ route('businesses.changeStatus', $business) }}" method="POST" style="display:inline;">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <input type="hidden" name="status" value="rejected">
+                                                                <button type="submit" class="dropdown-item">Set Reject</button>
+                                                            </form>
+                                                            @endif
+
+                                                            @if($business->status != 'pending')
+                                                            <form action="{{ route('businesses.changeStatus', $business) }}" method="POST" style="display:inline;">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <input type="hidden" name="status" value="pending">
+                                                                <button type="submit" class="dropdown-item">Set Pending</button>
+                                                            </form>
+                                                            @endif
+
+                                                            <div class="dropdown-divider"></div>
+                                                        @endif
+
+                                                        <form action="{{ route('businesses.changeStatus', $business) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input type="hidden" name="status" value="inactive">
+                                                            <button type="submit" class="dropdown-item">Set Inactive</button>
+                                                        </form>
+
+                                                        <form action="{{ route('businesses.destroy', $business) }}" method="POST" style="display:inhirit;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" onclick="confirmDeletion(event)" class="dropdown-item text-danger">Delete</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+
                                                 <script>
                                                     function confirmDeletion(event) {
                                                         // Affiche une boîte de confirmation
@@ -163,9 +232,10 @@
                 </div>
             </div>
         </div>
+        
         <!-- Pagination -->
         <div class="pagination">
-            {{ $businesses->links('pagination::bootstrap-4') }}
+            {{ $businesses->appends(request()->except('page'))->links('pagination::bootstrap-4') }}
         </div>
     @else
         <div class="alert alert-danger" role="alert">

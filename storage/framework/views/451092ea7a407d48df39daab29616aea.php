@@ -32,7 +32,12 @@
 
     <link rel="stylesheet" href="<?php echo e(asset('css/style.css')); ?>">
 
+    <!-- Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+
+    <!-- Datatable -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    
 
     <style>
 
@@ -82,57 +87,66 @@
         <?php echo $__env->make('footer', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
     </div>
 
+    <!-- Charger jQuery en premier -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
-    <!-- Inclure votre fichier main.js ensuite -->
-    <script src="<?php echo e(asset('js/main.js')); ?>"></script>
-    <script src="<?php echo e(asset('js/jquery-migrate-3.0.1.min.js')); ?>"></script>
+    <!-- Scripts dépendants de jQuery -->
     <script src="<?php echo e(asset('js/jquery-ui.js')); ?>"></script>
-    <script src="<?php echo e(asset('js/popper.min.js')); ?>"></script>
-    <script src="<?php echo e(asset('js/bootstrap.min.js')); ?>"></script>
     <script src="<?php echo e(asset('js/owl.carousel.min.js')); ?>"></script>
     <script src="<?php echo e(asset('js/jquery.stellar.min.js')); ?>"></script>
     <script src="<?php echo e(asset('js/jquery.countdown.min.js')); ?>"></script>
     <script src="<?php echo e(asset('js/jquery.magnific-popup.min.js')); ?>"></script>
     <script src="<?php echo e(asset('js/bootstrap-datepicker.min.js')); ?>"></script>
     <script src="<?php echo e(asset('js/rangeslider.min.js')); ?>"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
+    <!-- Charger Popper.js et Bootstrap -->
+    <script src="<?php echo e(asset('js/popper.min.js')); ?>"></script>
+    <script src="<?php echo e(asset('js/bootstrap.min.js')); ?>"></script>
 
+    <!-- Charger les animations (AOS) -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+    <!-- Votre fichier principal JavaScript -->
+    <script src="<?php echo e(asset('js/main.js')); ?>"></script>
     <script src="<?php echo e(asset('js/typed.js')); ?>"></script>
+
+    <!-- Script pour Typed.js -->
     <script>
         var typed = new Typed('.typed-words', {
-        strings: ["Business"," Business"," Business", " Business"],
-        typeSpeed: 80,
-        backSpeed: 80,
-        backDelay: 4000,
-        startDelay: 1000,
-        loop: true,
-        showCursor: true
+            strings: ["Business", " Business", " Business", " Business"],
+            typeSpeed: 80,
+            backSpeed: 80,
+            backDelay: 4000,
+            startDelay: 1000,
+            loop: true,
+            showCursor: true
         });
     </script>
 
-    <!-- <script>
-        // Rating
+    <!-- Script pour le filtrage AJAX -->
+    <script>
         $(document).ready(function() {
-            $('.bar span').hide();
-            $('#bar-five').animate({
-                width: '75%'}, 1000);
-            $('#bar-four').animate({
-                width: '35%'}, 1000);
-            $('#bar-three').animate({
-                width: '20%'}, 1000);
-            $('#bar-two').animate({
-                width: '15%'}, 1000);
-            $('#bar-one').animate({
-                width: '30%'}, 1000);
-            
-            setTimeout(function() {
-                $('.bar span').fadeIn('slow');
-            }, 1000);
-        
+            $('#filterForm input, #filterForm select').on('change input', function() {
+                const form = $('#filterForm');
+                $.ajax({
+                    url: form.attr('action'),
+                    method: form.attr('method'),
+                    data: form.serialize(),
+                    beforeSend: function() {
+                        $('#results').html('<p>Loading...</p>');
+                    },
+                    success: function(response) {
+                        $('#results').html($(response).find('#results').html());
+                    },
+                    error: function() {
+                        $('#results').html('<div class="alert alert-warning" role="alert">Something went wrong. Please try again.</div>');
+                    }
+                });
+            });
         });
-    </script> -->
+    </script>
+
 </body>
 </html>
 <?php /**PATH /Applications/XAMPP/xamppfiles/htdocs/web/E-business-society/resources/views/layouts/app.blade.php ENDPATH**/ ?>

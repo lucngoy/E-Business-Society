@@ -41,7 +41,7 @@
                             </div>
                         @else
                             <div class="table-responsive">
-                                <table class="table text-nowrap mb-0 align-middle">
+                                <table id="myTable" class="table table-bordered table-striped mb-0" style="width:100%">
                                     <thead class="text-dark fs-4">
                                     <tr>
                                         <th class="border-bottom-0">
@@ -72,10 +72,12 @@
                                     <tbody>
                                         @foreach ($users as $user)
                                             <tr>
-                                                <td class="border-bottom-0"><h6 class="fw-semibold mb-0">{{ $user->id }}</h6></td>
+                                                <td class="border-bottom-0">
+                                                    <h6 class="fw-normal mb-0">{{ $user->id }}</h6>
+                                                </td>
                                                 
                                                 <td class="border-bottom-0">
-                                                    <h6 class="fw-semibold mb-1">{{ $user->name }}</h6>
+                                                    <h6 class="fw-normal mb-0">{{ $user->name }}</h6>
                                                     <!-- <span class="fw-normal">Web Designer</span> -->
                                                 </td>
 

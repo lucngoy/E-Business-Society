@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('type');
-            $table->morphs('notifiable');
+            $table->id();  // Ceci crée un champ `id` de type INT auto-incrémenté
+            $table->morphs('notifiable');  // Pour gérer les notifications pour différents modèles
+            $table->text('type');
             $table->text('data');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();

@@ -23,30 +23,6 @@
               <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
                 <li class="<?php echo e(request()->is('/') ? 'active' : ''); ?>"><a href="<?php echo e(route('home')); ?>"><span>Home</span></a></li>
 
-                <!-- <li class="has-children">
-                    <a href="#"><span>Businesses</span></a>
-                    <ul class="dropdown arrow-top">
-                        <li><a href="#">Restaurants</a></li>
-                        <li><a href="#">Professional Services</a></li>
-                        <li><a href="#">Amenities</a></li>
-                        <li><a href="#">Health and Wellness</a></li>
-                        <li class="has-children">
-                            <a href="#">Shopping</a>
-                            <ul class="dropdown">
-                                <li><a href="#">Clothing</a></li>
-                                <li><a href="#">Electronics</a></li>
-                                <li><a href="#">Furniture</a></li>
-                                <li><a href="#">Jewelry</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#">Education</a></li>
-                        <li><a href="#">Transport and Travel</a></li>
-                        <li><a href="#">Arts and Leisure</a></li>
-                        <li><a href="#">Technology</a></li>
-                        <li><a href="#">Construction and Home</a></li>
-                    </ul>
-                </li> -->
-
                 <li class="has-children">
                     <a><span>Businesses</span></a>
                     <ul class="dropdown">

@@ -25,6 +25,7 @@
             </div>
         </div>
     </div>
+    
 
     <div class="row">
         <div class="col-lg-12 d-flex align-items-stretch">
@@ -38,7 +39,7 @@
                         </div>
                     @else
                         <div class="table-responsive">
-                            <table class="table text-nowrap mb-0 align-middle">
+                            <table id="myTable" class="table table-bordered table-striped mb-0" style="width:100%">
                                 <thead class="text-dark fs-4">
                                 <tr>
                                     <th class="border-bottom-0">
@@ -82,38 +83,26 @@
                                             <p class="mb-0 fw-normal">{{ Str::limit($review->comment, 100) }}</p>
                                         </td>
 
-                                        <!-- <td class="border-bottom-0">
-                                            <p class="mb-0 fw-normal">
-                                                dimanche	10:00–22:00
-                                                lundi	08:00–22:00
-                                                mardi	08:00–22:00
-                                                mercredi	08:00–22:00
-                                                jeudi	08:00–22:00
-                                                vendredi	08:00–22:00
-                                                samedi	10:00–22:00
-                                            </p>
-                                        </td> -->
+                                        @if($user->isAdmin())
+                                            <td class="border-bottom-0">
+                                                <form action="{{ route('reviews.destroy', $review->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirmDeletion(event);">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                </form>
 
-                                        <td class="border-bottom-0">
-                                            @if($user->isAdmin())
-                                            <form action="{{ route('reviews.destroy', $review->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirmDeletion(event);">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                            </form>
-                                            @endif
-
-                                            <script>
-                                                function confirmDeletion(event) {
-                                                    // Affiche une boîte de confirmation
-                                                    if (!confirm('Are you sure you want to delete this review? This action cannot be undone.')) {
-                                                        event.preventDefault(); // Empêche l'envoi du formulaire si l'utilisateur clique sur "Annuler"
-                                                        return false;
+                                                <script>
+                                                    function confirmDeletion(event) {
+                                                        // Affiche une boîte de confirmation
+                                                        if (!confirm('Are you sure you want to delete this review? This action cannot be undone.')) {
+                                                            event.preventDefault(); // Empêche l'envoi du formulaire si l'utilisateur clique sur "Annuler"
+                                                            return false;
+                                                        }
+                                                        return true; // Permet l'envoi du formulaire si l'utilisateur clique sur "OK"
                                                     }
-                                                    return true; // Permet l'envoi du formulaire si l'utilisateur clique sur "OK"
-                                                }
-                                            </script>
-                                        </td>
+                                                </script>
+                                            </td>
+                                        @endif
                                     </tr>
                                     @endforeach
                                 </tbody>

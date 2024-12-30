@@ -200,8 +200,6 @@ body {
   margin-top: 8px;
 }
 
-
-
 .custom-map-control-button {
   background-color: #fff;
   border: 0;
@@ -1579,8 +1577,11 @@ h1, h2, h3, h4, h5,
     font-style: italic; }
   .testimonial figure img {
     max-width: 100px;
+    max-height: 100px;
     margin: 0 auto;
-    border-radius: 50%; }
+    border-radius: 50%;
+    background: rgb(231, 231, 231);
+  }
 
 .breadcrumb-custom {
   font-size: 1rem !important; }
@@ -1732,6 +1733,7 @@ h1, h2, h3, h4, h5,
   .no-sm-border {
     border: none !important; } }
 
+    
 .listing-item {
   position: relative;
   overflow: hidden;
@@ -1745,6 +1747,9 @@ h1, h2, h3, h4, h5,
     top: 0;
     z-index: 1;
     background: rgba(0, 0, 0, 0.4); }
+  .listing-image{
+    height: 350px;
+  }
   .listing-item img {
     -o-object-fit: cover;
     object-fit: cover;

@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -69,4 +70,16 @@ class User extends Authenticatable
     {
         return $this->role === 'user';
     }
+
+    public function businesses()
+    {
+        return $this->hasMany(Business::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+
 }

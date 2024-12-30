@@ -20,14 +20,17 @@ class UserController extends Controller
         $search = $request->input('search');
 
         $users = User::query()
-        ->latest()
-        ->where('name', 'like', "%{$search}%")
-        ->orWhere('email', 'like', "%{$search}%")
-        ->orWhere('role', 'like', "%{$search}%")
-        ->paginate(10)
-        ->onEachSide(2);
+            ->latest()
+            ->where('name', 'like', "%{$search}%")
+            ->orWhere('email', 'like', "%{$search}%")
+            ->orWhere('role', 'like', "%{$search}%")
+            ->paginate(10)
+            ->onEachSide(2);
 
-        return view('dashboard.users', compact('users', 'search'));
+        // Total des notifications
+        $totalNotifications = $user->unreadNotifications()->count();
+
+        return view('dashboard.users', compact('users', 'search','totalNotifications'));
     }
 
     // Supprime un user de la base de données

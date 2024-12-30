@@ -40,9 +40,13 @@
 
                               <select class="form-control" name="category">
                                 <option value="">Select category</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->category_name }}</option>
-                                @endforeach
+                                @if(isset($categories) && $categories->isNotEmpty())
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                    @endforeach
+                                @else
+                                    <option disabled>No categories available</option>
+                                @endif
                               </select>
                             </div>
                           </div>
@@ -69,62 +73,42 @@
         <div class="row justify-content-center mb-5">
           <div class="col-md-7 text-center border-primary">
             <h2 class="font-weight-light text-primary">Featured Companies</h2>
-            <p class="color-black-opacity-5">The must-sees in your region</p>
+            <p class="color-black-opacity-5">The must-rated in your region</p>
           </div>
         </div>
 
         <div class="row">
-          <div class="col-md-6 mb-4 mb-lg-4 col-lg-4">
-            
-            <div class="listing-item">
-              <div class="listing-image">
-                <img src="images/img_1.jpg" alt="Free Website Template by Free-Template.co" class="img-fluid">
-              </div>
-              <div class="listing-item-content">
-                <a href="listings-single.html" class="bookmark" data-toggle="tooltip" data-placement="left" title="Bookmark"><span class="icon-heart"></span></a>
-                <a class="px-3 mb-3 category" href="#">Hotels</a>
-                <h2 class="mb-1"><a href="listings-single.html">Luxe Hotel</a></h2>
-                <span class="address">West Orange, New York</span>
-              </div>
-            </div>
+          @if(isset($topBusinesses) && $topBusinesses->isNotEmpty())
+            @foreach($topBusinesses as $business)
+              <div class="col-md-6 mb-4 mb-lg-4 col-lg-4">
 
-          </div>
-          <div class="col-md-6 mb-4 mb-lg-4 col-lg-4">
-            
-            <div class="listing-item">
-              <div class="listing-image">
-                <img src="images/img_2.jpg" alt="Free Website Template by Free-Template.co" class="img-fluid">
-              </div>
-              <div class="listing-item-content">
-                <a href="listings-single.html" class="bookmark"><span class="icon-heart"></span></a>
-                <a class="px-3 mb-3 category" href="#">Restaurants</a>
-                <h2 class="mb-1"><a href="listings-single.html">Jones Grill &amp; Restaurants</a></h2>
-                <span class="address">Brooklyn, New York</span>
-              </div>
-            </div>
+                <div class="listing-item">
+                  <div class="listing-image">
+                    <img src="{{ $business->image ? asset('storage/' . $business->image) : asset('images/default-img.png') }}" alt="{{ $business->business_name }}" class="img-fluid">
+                  </div>
+                  <div class="listing-item-content">
+                    <!-- <a href="listings-single.html" class="bookmark" data-toggle="tooltip" data-placement="left" title="Bookmark"><span class="icon-heart"></span></a> -->
+                    <a class="px-3 mb-3 category" href="{{ route('business.search', ['category' => $business->category->id ?? '']) }}">{{ $business->category->category_name }}</a>
+                    <h2 class="mb-1"><a href="{{ route('business.show', $business->id) }}">{{ $business->business_name }}</a></h2>
+                    <span class="address">{{ Str::limit($business->address, 40) }}</span>
+                    <br>
+                    <span>
+                      @for ($i = 0; $i < 5; $i++)
+                          <span class="icon-star {{ $i < (int)$business->reviews_avg_rating ? 'text-warning' : 'text-secondary' }}"></span>
+                      @endfor
+                    </span>
+                  </div>
+                </div>
 
-          </div>
-          <div class="col-md-6 mb-4 mb-lg-4 col-lg-4">
-            
-            <div class="listing-item">
-              <div class="listing-image">
-                <img src="images/img_3.jpg" alt="Free Website Template by Free-Template.co" class="img-fluid">
               </div>
-              <div class="listing-item-content">
-                <a href="listings-single.html" class="bookmark"><span class="icon-heart"></span></a>
-                <a class="px-3 mb-3 category" href="#">Events</a>
-                <h2 class="mb-1"><a href="listings-single.html">Live Band</a></h2>
-                <span class="address">West Orange, New York</span>
-              </div>
-            </div>
-
-          </div>
+            @endforeach
+          @else
+            <p class="text-center">No businesses available</p>
+          @endif
         </div>
       </div>
     </div>
 
-    
-    
 
     <div class="site-section bg-light">
       <div class="container">
@@ -134,112 +118,160 @@
             <h2 class="font-weight-light text-primary">Recent reviews</h2>
           </div>
         </div>
-        
 
         <div class="slide-one-item home-slider owl-carousel">
-          <div>
-            <div class="testimonial">
-              <figure class="mb-4">
-                <img src="images/person_3_sq.jpg" alt="Free Website Template by Free-Template.co" class="img-fluid mb-3">
-                <p>Willie Smith</p>
-              </figure>
-              <blockquote>
-                <p>&ldquo;Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.&rdquo;</p>
-              </blockquote>
-              <a href=""><b>Google</b></a>
-            </div>
-          </div>
-          <div>
-            <div class="testimonial">
-              <figure class="mb-4">
-                <img src="images/person_2_sq.jpg" alt="Free Website Template by Free-Template.co" class="img-fluid mb-3">
-                <p>Robert Jones</p>
-              </figure>
-              <blockquote>
-                <p>&ldquo;A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.&rdquo;</p>
-              </blockquote>
-              <a href=""><b>Google</b></a>
-            </div>
-          </div>
+          @if(isset($latestReviews) && $latestReviews->isNotEmpty())
+            @foreach ($latestReviews as $latestReview)
+              <div>
+                <div class="testimonial">
+                  <figure class="mb-4">
+                    <img src="{{ asset('images/profile/user-1.jpg') }}" alt="Free Website Template by Free-Template.co" class="img-fluid mb-3">
+                    <p>{{ $latestReview->user->name ?? 'Anonymous' }}</p>
+                  </figure>
+                  <blockquote>
+                    <p>&ldquo;{{ Str::limit($latestReview->comment, 100) }}&rdquo;</p>
+                  </blockquote>
+                  <a href="{{ route('business.show', $latestReview->business->id ?? '#') }}">
+                    <b>{{ $latestReview->business->business_name ?? 'No Business' }}</b>
+                  </a>
+                </div>
+              </div>
+            @endforeach
+          @endif
         </div>
       </div>
     </div>
+
 
     <br>
     <div class="map-section" data-aos="fade">
-      <div class="container">
-        <div class="row justify-content-center mb-5">
-          <div class="col-md-7 text-center border-primary">
-            <h2 class="font-weight-light text-primary">Find businesses near you</h2>
-            <p class="color-black-opacity-5">Locate local services with our interactive map</p>
+      <!-- Table et carte dans le HTML -->
+      <div class="map-section" id="mapSection" data-aos="fade">
+        <div class="container">
+          <div class="row justify-content-center mb-5">
+            <div class="col-md-7 text-center border-primary">
+              <h2 class="font-weight-light text-primary">Find businesses near you</h2>
+              <p class="color-black-opacity-5">Locate local services with our interactive map</p>
+            </div>
           </div>
+
+          <!-- Carte -->
+          <div id="map" style="height: 400px;"></div> <!-- Carte ici -->
+
+
+          <!-- Tableau des entreprises -->
+          <table id="businessTable" class="table table-striped" style="width: 100%; margin-top: 20px;"></table>
         </div>
-        <!-- La carte doit avoir un conteneur avec une hauteur définie -->
-        <div id="map"></div>
-        
-        <div class="business-list" id="businessList"></div>
       </div>
 
-      <!-- Leaflet JS - IMPORTANT: le charger APRÈS la définition du div map -->
-      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-              integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-              crossorigin=""></script>
+      <!-- Leaflet JS -->
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
       <script>
-          // Attendez que tout soit chargé
-          document.addEventListener('DOMContentLoaded', function() {
-              // Données des entreprises
-              const businesses = [
-                  {
-                      name: "Siège Paris",
-                      address: "123 Avenue des Champs-Élysées, Paris",
-                      coordinates: [48.8566, 2.3522]
-                  },
-                  {
-                      name: "Bureau Lyon",
-                      address: "456 Rue de la République, Lyon",
-                      coordinates: [45.7578, 4.8320]
-                  }
-              ];
+        document.addEventListener('DOMContentLoaded', function () {
+          // Données des entreprises transmises depuis le contrôleur
+          const businesses = @json($businesses);
+          
+          let map;
+          const markers = []; // Pour stocker les marqueurs
 
-              // Initialiser la carte au centre de la France
-              const map = L.map('map').setView([46.603354, 1.888334], 6);
-
-              // Ajouter la couche OpenStreetMap
+          // Fonction pour initialiser la carte
+          const initMap = (lat, lng, zoomLevel = 2) => {
+            if (!map) {
+              map = L.map('map').setView([lat, lng], zoomLevel);
               L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                  attribution: '© OpenStreetMap contributors'
+                attribution: '© OpenStreetMap contributors'
               }).addTo(map);
+            } else {
+              map.setView([lat, lng], zoomLevel);
+            }
 
-              // Ajouter les marqueurs et la liste
-              const businessList = document.getElementById('businessList');
-              businesses.forEach(business => {
-                  // Ajouter le marqueur
-                  const marker = L.marker(business.coordinates)
-                      .bindPopup(`
-                          <strong>${business.name}</strong><br>
-                          ${business.address}
-                      `)
-                      .addTo(map);
+            // Ajouter les marqueurs
+            businesses.forEach(business => {
+              const marker = L.marker([business.latitude, business.longitude])
+                .bindPopup(`<strong>${business.business_name}</strong><br>${business.address}`)
+                .addTo(map);
 
-                  // Créer l'élément de liste
-                  const item = document.createElement('div');
-                  item.className = 'business-item';
-                  item.innerHTML = `
-                      <strong>${business.name}</strong><br>
-                      ${business.address}
-                  `;
-                  
-                  // Ajouter l'interaction avec la carte
-                  item.onclick = () => {
-                      map.setView(business.coordinates, 13);
-                      marker.openPopup();
-                  };
-                  
-                  businessList.appendChild(item);
+              markers.push({ marker, business });
+
+              marker.on('click', () => {
+                map.setView([business.latitude, business.longitude], 15);
+                marker.openPopup();
               });
+            });
+          };
+
+          // Géolocalisation pour centrer la carte
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              position => {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                initMap(userLat, userLng, 12);
+              },
+              error => {
+                console.error('Géolocalisation échouée, position par défaut utilisée.', error);
+                initMap(0, 0);
+              }
+            );
+          } else {
+            console.warn('Géolocalisation non prise en charge.');
+            initMap(0, 0);
+          }
+
+          // Initialisation de la DataTable
+          const table = $('#businessTable').DataTable({
+            data: businesses,
+            paging: false,          // Désactive la pagination
+            scrollCollapse: true,   // Permet de réduire la hauteur de la table si nécessaire
+            scrollY: '50vh',      // Définit la hauteur de la table avec un défilement vertical
+            columns: [
+              { data: 'business_name', title: 'Business Name' },
+              { data: 'address', title: 'Address' },
+              { data: 'phone', title: 'Phone' },
+              {
+                data: null,
+                title: 'Actions',
+                render: function (data, type, row) {
+                  return `<button class="btn btn-primary btn-zoom" data-lat="${row.latitude}" data-lng="${row.longitude}" data-business="${row.business_name}" data-address="${row.address}">Zoom on Map</button>`;
+                }
+              }
+            ]
           });
+
+          // Ajouter un événement pour zoomer sur la carte et aller à la section de la carte
+          $('#businessTable').on('click', '.btn-zoom', function () {
+            const lat = $(this).data('lat');
+            const lng = $(this).data('lng');
+
+            // Zoomer sur la carte
+            map.setView([lat, lng], 15);
+
+            // Trouver le marqueur correspondant à cette entreprise
+            const markerData = markers.find(item => 
+              Math.abs(item.business.latitude - lat) < 0.0001 && Math.abs(item.business.longitude - lng) < 0.0001
+            );
+
+            if (markerData) {
+              if (markerData.marker.isPopupOpen()) {
+                markerData.marker.closePopup();
+              }
+              markerData.marker.openPopup();
+            } else {
+              console.log("Aucun marqueur trouvé pour cette position");
+            }
+
+            // Faire défiler vers la section de la carte
+            const mapSection = document.getElementById('mapSection');
+            mapSection.scrollIntoView({ behavior: 'smooth' });
+          });
+
+        });
       </script>
+
     </div>
+
+
     
     <!-- Inclure la section appel a l'action -->
     @include('call-to-action')

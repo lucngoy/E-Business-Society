@@ -19,31 +19,45 @@ class ReviewController extends Controller
 
         if ($user->isAdmin()) {
             // Si l'utilisateur est administrateur, récupérer tous les avis
-            $reviews = Review::query()
+            $reviews = Review::with('business')
                 ->latest()
                 ->where('rating', 'like', "%{$search}%")
                 ->orWhere('comment', 'like', "%{$search}%")
+                ->orWhereHas('business', function ($query) use ($search) {
+                    $query->where('business_name', 'like', "%{$search}%");
+                })
                 ->paginate(10)
                 ->onEachSide(2); // Remplacez '10' par le nombre d'éléments par page
 
         } elseif ($user->isBusinessOwner()) {
             // Si l'utilisateur est propriétaire d'entreprise, récupérer ses entreprises et leurs avis
             $reviews = Review::with('business')
-                ->whereHas('business', function ($query) use ($user) {
-                    $query->where('user_id', $user->id); // Remplacez `user_id` par le nom correct de la colonne
+                ->where(function ($query) use ($user) {
+                    $query->whereHas('business', function ($subQuery) use ($user) {
+                        $subQuery->where('user_id', $user->id); // Filtrer uniquement les entreprises de l'utilisateur
+                    });
+                })
+                ->where(function ($query) use ($search) {
+                    $query->where('rating', 'like', "%{$search}%")
+                        ->orWhere('comment', 'like', "%{$search}%")
+                        ->orWhereHas('business', function ($subQuery) use ($search) {
+                            $subQuery->where('business_name', 'like', "%{$search}%");
+                        });
                 })
                 ->latest()
-                ->where('rating', 'like', "%{$search}%")
-                ->orWhere('comment', 'like', "%{$search}%")
                 ->paginate(10)
-                ->onEachSide(2); // Remplacez '10' par le nombre d'éléments par page;
+                ->onEachSide(2);
 
         } else {
             // Si l'utilisateur n'a pas de rôle valide, retourner une liste vide
             $reviews = collect(); // Collection vide
         }
 
-        return view('dashboard.reviews', compact('reviews', 'user', 'search'));
+        // Total des notifications
+        $totalNotifications = $user->unreadNotifications()->count();
+
+
+        return view('dashboard.reviews', compact('reviews', 'user', 'search','totalNotifications'));
     }
 
     // Méthode pour enregistrer un nouvel avis

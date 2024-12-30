@@ -13,6 +13,7 @@ class Category extends Model
 
     protected $fillable = ['id', 'category_name'];
 
+
     public function businesses()
     {
         return $this->hasMany(Business::class);

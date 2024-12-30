@@ -28,7 +28,12 @@ class CategoryController extends Controller
             ->paginate(10)
             ->onEachSide(2);
         // dd($categories);
-        return view('dashboard.categories.index', compact('categories'));
+
+        // Total des notifications
+        $totalNotifications = $user->unreadNotifications()->count();
+
+
+        return view('dashboard.categories.index', compact('categories','totalNotifications'));
     }
 
     // Affiche le formulaire d'édition d'une categorie
