@@ -4,32 +4,37 @@
             <div class="col-md-12">
             <div class="row">
                 <div class="col-md-6 mb-5 mb-lg-0 col-lg-3">
-                <h2 class="footer-heading mb-4">Quick Links</h2>
-                <ul class="list-unstyled">
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Testimonials</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
+                    <h2 class="footer-heading mb-4">Quick Links</h2>
+                    <ul class="list-unstyled">
+                        <li class="{{ request()->is('/') ? 'active' : '' }}"><a href="{{ route('home') }}"><span>Home</span></a></li>
+                        <li class="{{ request()->is('listings') ? 'active' : '' }}"><a href="{{ route('listings') }}"><span>Listings</span></a></li>
+                        <li class="{{ request()->is('about') ? 'active' : '' }}"><a href="{{ route('about') }}"><span>About</span></a></li>
+                        <li class="{{ request()->is('contact') ? 'active' : '' }}"><a href="{{ route('contact') }}"><span>Contact</span></a></li>
+                        @guest
+                            <li class="{{ request()->is('login') ? 'active' : '' }}">
+                                <a href="{{ route('login') }}"><span>Login</span></a>
+                            </li>
+                        @endguest
+                    </ul>
+                </div>
+                <!-- <div class="col-md-6 mb-5 mb-lg-0 col-lg-3">
+                    <h2 class="footer-heading mb-4">Products</h2>
+                    <ul class="list-unstyled">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">Testimonials</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
                 </div>
                 <div class="col-md-6 mb-5 mb-lg-0 col-lg-3">
-                <h2 class="footer-heading mb-4">Products</h2>
-                <ul class="list-unstyled">
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Testimonials</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-                </div>
-                <div class="col-md-6 mb-5 mb-lg-0 col-lg-3">
-                <h2 class="footer-heading mb-4">Features</h2>
-                <ul class="list-unstyled">
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Testimonials</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-                </div>
+                    <h2 class="footer-heading mb-4">Features</h2>
+                    <ul class="list-unstyled">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">Testimonials</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div> -->
                 
                 <div class="col-md-6 mb-5 mb-lg-0 col-lg-3">
                     <h2 class="footer-heading mb-4">Follow Us</h2>

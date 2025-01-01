@@ -4,32 +4,37 @@
             <div class="col-md-12">
             <div class="row">
                 <div class="col-md-6 mb-5 mb-lg-0 col-lg-3">
-                <h2 class="footer-heading mb-4">Quick Links</h2>
-                <ul class="list-unstyled">
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Testimonials</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
+                    <h2 class="footer-heading mb-4">Quick Links</h2>
+                    <ul class="list-unstyled">
+                        <li class="<?php echo e(request()->is('/') ? 'active' : ''); ?>"><a href="<?php echo e(route('home')); ?>"><span>Home</span></a></li>
+                        <li class="<?php echo e(request()->is('listings') ? 'active' : ''); ?>"><a href="<?php echo e(route('listings')); ?>"><span>Listings</span></a></li>
+                        <li class="<?php echo e(request()->is('about') ? 'active' : ''); ?>"><a href="<?php echo e(route('about')); ?>"><span>About</span></a></li>
+                        <li class="<?php echo e(request()->is('contact') ? 'active' : ''); ?>"><a href="<?php echo e(route('contact')); ?>"><span>Contact</span></a></li>
+                        <?php if(auth()->guard()->guest()): ?>
+                            <li class="<?php echo e(request()->is('login') ? 'active' : ''); ?>">
+                                <a href="<?php echo e(route('login')); ?>"><span>Login</span></a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+                <!-- <div class="col-md-6 mb-5 mb-lg-0 col-lg-3">
+                    <h2 class="footer-heading mb-4">Products</h2>
+                    <ul class="list-unstyled">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">Testimonials</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
                 </div>
                 <div class="col-md-6 mb-5 mb-lg-0 col-lg-3">
-                <h2 class="footer-heading mb-4">Products</h2>
-                <ul class="list-unstyled">
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Testimonials</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-                </div>
-                <div class="col-md-6 mb-5 mb-lg-0 col-lg-3">
-                <h2 class="footer-heading mb-4">Features</h2>
-                <ul class="list-unstyled">
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Testimonials</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-                </div>
+                    <h2 class="footer-heading mb-4">Features</h2>
+                    <ul class="list-unstyled">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">Testimonials</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div> -->
                 
                 <div class="col-md-6 mb-5 mb-lg-0 col-lg-3">
                     <h2 class="footer-heading mb-4">Follow Us</h2>
