@@ -118,9 +118,6 @@ class DashboardController extends Controller
         ));
     }
 
-    // public function reviews() {
-    //     return view('dashboard.reviews');
-    // }
 
     public function users() {
         $user = Auth::user();

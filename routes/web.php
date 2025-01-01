@@ -73,7 +73,7 @@ Route::prefix('dashboard/categories')->middleware(['auth', 'verified'])->group(f
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::delete('/profile/{user}', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 // Routes pour la gestion des entreprises (Business Profile Management)

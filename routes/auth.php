@@ -58,9 +58,9 @@ Route::middleware('auth')->group(function () {
         ->name('logout');
 
     // Ajout d'une nouvelle route protégée pour le tableau de bord
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    // Route::get('/dashboard', function () {
+    //     return view('dashboard');
+    // })->name('dashboard');
 });
 
 // Middleware de vérification de rôle (admin)

@@ -19,6 +19,14 @@
             <br>
         <?php endif; ?>
 
+        <?php if(session('success')): ?>
+            <div style="background: #57b846cc;color: #ffffff;text-align: center;padding: 15px 10px;border-radius: 30px;">
+                <?php echo e(session('success')); ?>
+
+            </div>
+            <br>
+        <?php endif; ?>
+
 
         <?php echo csrf_field(); ?>
         <span class="login100-form-title">

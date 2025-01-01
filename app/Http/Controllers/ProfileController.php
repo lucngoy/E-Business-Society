@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
+
 class ProfileController extends Controller
 {
+    // Afficher la page setting
     public function settings()
     {
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Please log in to access this page.');
+        }
         return view('dashboard.settings');
     }
 
+    // Mettre a jour le profil
     public function updateProfile(Request $request)
     {
         $user = auth()->user();
@@ -42,7 +49,7 @@ class ProfileController extends Controller
     }
 
 
-
+    // Mettre a jour le mot de passe
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -61,5 +68,16 @@ class ProfileController extends Controller
         ]);
 
         return redirect()->route('dashboard.settings')->with('success', 'Password updated successfully.');
+    }
+
+    // Supprime un user de la base de données
+    public function destroy(User $user)
+    {
+        try {
+            $user->delete(); // Supprime l'utilisateur
+            return redirect()->route('login')->with('success', 'User profile deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('dashboard.settings')->with('error', 'Failed to delete. Please try later.');
+        }
     }
 }

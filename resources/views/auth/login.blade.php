@@ -19,6 +19,13 @@
             <br>
         @endif
 
+        @if (session('success'))
+            <div style="background: #57b846cc;color: #ffffff;text-align: center;padding: 15px 10px;border-radius: 30px;">
+                {{ session('success') }}
+            </div>
+            <br>
+        @endif
+
 
         @csrf
         <span class="login100-form-title">

@@ -8,6 +8,12 @@
 
       </div>
     <?php endif; ?>
+    <?php if(session('error')): ?>
+      <div class="alert alert-warning">
+        <?php echo e(session('error')); ?>
+
+      </div>
+    <?php endif; ?>
 
     <!-- Error Messages -->
     <?php if($errors->any()): ?>
@@ -82,6 +88,31 @@
           </div>
         </div>
       </div>
+      <?php if(auth()->user()->role != 'admin'): ?>
+        <div class="col-lg-12 d-flex align-items-stretch">
+          <div class="card w-100">
+            <div class="card-body p-4">
+              <h5 class="card-title fw-semibold mb-4">Delete My Account</h5>
+              <form action="<?php echo e(route('profile.destroy', $user->id)); ?>" method="POST" style="display:inline-block;" onsubmit="return confirmDeletion(event);">
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('DELETE'); ?>
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+
+              <script>
+                function confirmDeletion(event) {
+                    // Affiche une boîte de confirmation
+                    if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                        event.preventDefault(); // Empêche l'envoi du formulaire si l'utilisateur clique sur "Annuler"
+                        return false;
+                    }
+                    return true; // Permet l'envoi du formulaire si l'utilisateur clique sur "OK"
+                }
+              </script>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
     </div>
   </div>
 <?php $__env->stopSection(); ?>

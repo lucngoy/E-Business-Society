@@ -8,6 +8,11 @@
         {{ session('success') }}
       </div>
     @endif
+    @if (session('error'))
+      <div class="alert alert-warning">
+        {{ session('error') }}
+      </div>
+    @endif
 
     <!-- Error Messages -->
     @if ($errors->any())
@@ -82,6 +87,31 @@
           </div>
         </div>
       </div>
+      @if(auth()->user()->role != 'admin')
+        <div class="col-lg-12 d-flex align-items-stretch">
+          <div class="card w-100">
+            <div class="card-body p-4">
+              <h5 class="card-title fw-semibold mb-4">Delete My Account</h5>
+              <form action="{{ route('profile.destroy', $user->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirmDeletion(event);">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+
+              <script>
+                function confirmDeletion(event) {
+                    // Affiche une boîte de confirmation
+                    if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                        event.preventDefault(); // Empêche l'envoi du formulaire si l'utilisateur clique sur "Annuler"
+                        return false;
+                    }
+                    return true; // Permet l'envoi du formulaire si l'utilisateur clique sur "OK"
+                }
+              </script>
+            </div>
+          </div>
+        </div>
+      @endif
     </div>
   </div>
 @endsection
