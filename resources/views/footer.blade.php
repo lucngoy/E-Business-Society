@@ -9,7 +9,7 @@
                         <li class="{{ request()->is('/') ? 'active' : '' }}"><a href="{{ route('home') }}"><span>Home</span></a></li>
                         <li class="{{ request()->is('listings') ? 'active' : '' }}"><a href="{{ route('listings') }}"><span>Listings</span></a></li>
                         <li class="{{ request()->is('about') ? 'active' : '' }}"><a href="{{ route('about') }}"><span>About</span></a></li>
-                        <li class="{{ request()->is('contact') ? 'active' : '' }}"><a href="{{ route('contact') }}"><span>Contact</span></a></li>
+                        <!-- <li class="{{ request()->is('contact') ? 'active' : '' }}"><a href="{{ route('contact') }}"><span>Contact</span></a></li> -->
                         @guest
                             <li class="{{ request()->is('login') ? 'active' : '' }}">
                                 <a href="{{ route('login') }}"><span>Login</span></a>

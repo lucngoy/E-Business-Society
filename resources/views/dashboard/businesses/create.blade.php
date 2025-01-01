@@ -39,10 +39,8 @@
                                 <label for="category_id" class="form-label">Category</label>
                                 <select name="category_id" class="form-control" id="category_id">
                                     <option value="">Choose Category</option>
-                                    @foreach($categories as $category)
-                                        @if(is_null($category->parent_id)) <!-- Vérifie si parent_id est null -->
-                                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->category_name }}</option>
-                                        @endif
+                                    @foreach($categories as $category)=
+                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->category_name }}</option>
                                     @endforeach
                                 </select>
                             </div>

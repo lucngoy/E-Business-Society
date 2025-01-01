@@ -29,7 +29,7 @@ class BusinessController extends Controller
         View::share('user', Auth::user());
     }
 
-    // Affiche la liste des entreprises
+    // Affiche la liste des entreprises sur le dashboard
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -77,7 +77,7 @@ class BusinessController extends Controller
     }
 
 
-
+    // Affichage des business sur recheche principale
     public function search(Request $request)
     {
         // Validation des entrées
@@ -103,14 +103,19 @@ class BusinessController extends Controller
         }
 
         // Chargement des entreprises avec pagination
-        $businesses = $query->orderByDesc('id')->paginate(10)->onEachSide(2); // Retourne 10 résultats par page
+        $businesses = $query->orderByDesc('id')
+            ->where('status','approved') // Ne prendre que le businesses apprové par l'admin
+            ->paginate(10) // Afficher 10 business par page
+            ->onEachSide(2); // Retourne 10 résultats par page
 
         // Récupération des catégories principales
         $categories = Category::all();
 
-        // Récupère les 6 catégories les plus populaires (par nombre d'entreprises)
-        $topCategories = Category::withCount('businesses')
-            ->orderByDesc('businesses_count') // Tri par le nombre d'entreprises
+        // Récupère les 6 catégories les plus populaires (par nombre d'entreprises approuvées)
+        $topCategories = Category::withCount(['businesses' => function ($query) {
+            $query->where('status', 'approved');
+        }])
+            ->orderByDesc('businesses_count') // Tri par le nombre d'entreprises approuvées
             ->take(6) // Limite à 6 résultats
             ->get();
 

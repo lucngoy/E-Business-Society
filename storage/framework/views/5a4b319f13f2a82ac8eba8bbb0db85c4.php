@@ -25,11 +25,9 @@
       .dropdown-divider{
         border-top: solid 1px #e7e7e7;
       }
-    </style>
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
-    <style>
+
+
+
       .star.active{
         color: #83D504;
       }
@@ -49,6 +47,8 @@
         height: 100%;
       }
     </style>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script> -->
 </head>
 

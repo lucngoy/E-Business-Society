@@ -196,12 +196,12 @@
                                                             <div class="dropdown-divider"></div>
                                                         @endif
 
-                                                        <form action="{{ route('businesses.changeStatus', $business) }}" method="POST" style="display:inline;">
+                                                        <!-- <form action="{{ route('businesses.changeStatus', $business) }}" method="POST" style="display:inline;">
                                                             @csrf
                                                             @method('PATCH')
                                                             <input type="hidden" name="status" value="inactive">
                                                             <button type="submit" class="dropdown-item">Set Inactive</button>
-                                                        </form>
+                                                        </form> -->
 
                                                         <form action="{{ route('businesses.destroy', $business) }}" method="POST" style="display:inhirit;">
                                                             @csrf

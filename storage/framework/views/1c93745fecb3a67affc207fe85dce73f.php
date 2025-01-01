@@ -86,11 +86,6 @@
         </div>
     </div>
 
-
-
-    <!-- Inclure FAQ -->
-    <?php echo $__env->make('faq', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-
     <!-- Inclure la section appel a l'action -->
     <?php echo $__env->make('call-to-action', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 

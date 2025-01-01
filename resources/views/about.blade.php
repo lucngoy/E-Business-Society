@@ -88,11 +88,6 @@
         </div>
     </div>
 
-
-
-    <!-- Inclure FAQ -->
-    @include('faq')
-
     <!-- Inclure la section appel a l'action -->
     @include('call-to-action')
 

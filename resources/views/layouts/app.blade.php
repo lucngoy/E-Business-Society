@@ -70,6 +70,24 @@
         .business-item:hover {
             background: #f0f0f0;
         }
+
+        /* dropdown btn */
+      .dropdown-menu {
+        display: none; /* Cache par défaut */
+      }
+
+      .dropdown-menu.show {
+        display: block; /* Affiche lorsque la classe "show" est ajoutée */
+        position: absolute; /* Maintient l'affichage dans la position correcte */
+        will-change: transform; /* Optimisation des animations */
+        top: 100%; /* Position sous le bouton */
+        right: 0; /* Aligné à gauche */
+        z-index: 1000; /* Assure la priorité d'affichage */
+      }
+
+      .dropdown-divider{
+        border-top: solid 1px #e7e7e7;
+      }
     </style>
     
 </head>
@@ -110,6 +128,20 @@
     <!-- Votre fichier principal JavaScript -->
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="{{ asset('js/typed.js') }}"></script>
+
+    <!-- Btn dropdown -->
+    <script>
+        $('.dropdown-toggle').on('click', function (event) {
+        event.preventDefault(); // Empêche tout comportement par défaut (facultatif)
+        $(this).next('.dropdown-menu').toggleClass('show');
+        });
+        
+        $(document).on('click', function (event) {
+        if (!$(event.target).closest('.btn-group').length) {
+            $('.dropdown-menu').removeClass('show');
+        }
+        });
+    </script>
 
     <!-- Script pour Typed.js -->
     <script>

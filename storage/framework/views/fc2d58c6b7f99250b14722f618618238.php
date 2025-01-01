@@ -73,7 +73,7 @@
                     <div class="form-group">
                         <div class="wrap-icon">
                             <span class="icon icon-room"></span>
-                            <input type="text" name="location" value="<?php echo e(request('location')); ?>" placeholder="Location" class="form-control" oninput="applyFilter()">
+                            <input type="text" name="location" value="<?php echo e(request('location')); ?>" placeholder="Adress" class="form-control" oninput="applyFilter()">
                         </div>
                     </div>
                     <!-- <div class="form-group">

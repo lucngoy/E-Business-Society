@@ -38,7 +38,7 @@
 
                 <li class="<?php echo e(request()->is('listings') ? 'active' : ''); ?>"><a href="<?php echo e(route('listings')); ?>"><span>Listings</span></a></li>
                 <li class="<?php echo e(request()->is('about') ? 'active' : ''); ?>"><a href="<?php echo e(route('about')); ?>"><span>About</span></a></li>
-                <li class="<?php echo e(request()->is('contact') ? 'active' : ''); ?>"><a href="<?php echo e(route('contact')); ?>"><span>Contact</span></a></li>
+                <!-- <li class="<?php echo e(request()->is('contact') ? 'active' : ''); ?>"><a href="<?php echo e(route('contact')); ?>"><span>Contact</span></a></li> -->
                 <?php if(auth()->guard()->guest()): ?>
                     <li class="<?php echo e(request()->is('login') ? 'active' : ''); ?>">
                         <a href="<?php echo e(route('login')); ?>"><span>Login</span></a>

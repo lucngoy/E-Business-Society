@@ -13,6 +13,79 @@
             <div class="row">
                 <div class="col-lg-8" data-aos="fade" data-aos-delay="100">
                     <div class="mb-5 border-bottom pb-5">
+                        @if(auth()->check())
+                            <!-- Action btn -->
+                            <div>
+                                @if($user->id == $business->user_id || $user->isAdmin())
+                                    <a href="{{ route('businesses.edit', $business) }}" class="btn btn-primary btn-md text-white">Edit</a>
+                                    <form action="{{ route('businesses.destroy', $business) }}" method="POST" style="display:inline-block;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" onclick="confirmDeletion(event)" class="btn btn-danger btn-md text-white">Delete</button>
+                                    </form>
+                                @endif
+
+                                <!-- Action only for admin -->
+                                @if($user->isAdmin())
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary btn-md text-white dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                                        More Action
+                                    </button>
+                                    <div class="dropdown-menu">
+
+                                        <!-- Si l'admin peut approver ou rejeter la demande -->
+
+                                        @if($business->status != 'approved')
+                                        <form action="{{ route('businesses.changeStatus', $business) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status" value="approved">
+                                            <button type="submit" class="dropdown-item">Set Approve</button>
+                                        </form>
+                                        @endif
+
+                                        @if($business->status != 'rejected')
+                                        <form action="{{ route('businesses.changeStatus', $business) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status" value="rejected">
+                                            <button type="submit" class="dropdown-item">Set Reject</button>
+                                        </form>
+                                        @endif
+
+                                        @if($business->status != 'pending')
+                                        <form action="{{ route('businesses.changeStatus', $business) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status" value="pending">
+                                            <button type="submit" class="dropdown-item">Set Pending</button>
+                                        </form>
+                                        @endif
+                                        <!-- <form action="{{ route('businesses.changeStatus', $business) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status" value="inactive">
+                                            <button type="submit" class="dropdown-item">Set Inactive</button>
+                                        </form> -->
+
+                                    </div>
+                                </div>
+                                @endif
+
+                                <hr>
+                            </div>
+
+                            <script>
+                                function confirmDeletion(event) {
+                                    // Affiche une boîte de confirmation
+                                    if (!confirm('Are you sure you want to delete this business? This action cannot be undone.')) {
+                                        event.preventDefault(); // Empêche l'envoi du formulaire si l'utilisateur clique sur "Annuler"
+                                        return false;
+                                    }
+                                    return true; // Permet l'envoi du formulaire si l'utilisateur clique sur "OK"
+                                }
+                            </script>
+                        @endif
                         <p><img src="{{ $business->image ? asset('storage/' . $business->image) : asset('images/default-img.png') }}" alt="Business Image" class="img-fluid mb-4"></p>
                         
                         <p>{{ $business->description }}</p>

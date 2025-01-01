@@ -13,13 +13,13 @@
                         <form action="<?php echo e(route('business.search')); ?>" method="GET">
                             <div class="row align-items-center">
                                 <div class="col-lg-12 col-xl-4 no-sm-border border-right">
-                                    <input type="text" class="form-control" name="name" placeholder="Search by business name">
+                                    <input type="text" class="form-control" name="name" value="<?php echo e(request('name')); ?>" placeholder="Search by business name">
                                 </div>
 
                                 <div class="col-lg-12 col-xl-3 no-sm-border border-right">
                                     <div class="wrap-icon">
                                         <span class="icon icon-room"></span>
-                                        <input type="text" class="form-control" name="location" placeholder="Search by location">
+                                        <input type="text" class="form-control" name="location" value="<?php echo e(request('location')); ?>" placeholder="Search by adress">
                                     </div>
                                 </div>
 
@@ -32,7 +32,7 @@
                                         <select class="form-control" name="category">
                                             <option value="">Select category</option>
                                             <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($category->id); ?>"><?php echo e($category->category_name); ?></option>
+                                                <option value="<?php echo e($category->id); ?>" <?php echo e(request('category') == $category->id ? 'selected' : ''); ?>><?php echo e($category->category_name); ?></option>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
@@ -90,7 +90,7 @@
 
                 <!-- Pagination -->
                 <div class="pagination">
-                    <?php echo e($businesses->links()); ?>
+                  <?php echo e($businesses->appends(request()->except('page'))->links('pagination::default')); ?>
 
                 </div>
             <?php endif; ?>

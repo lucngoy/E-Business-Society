@@ -196,12 +196,12 @@
                                                             <div class="dropdown-divider"></div>
                                                         <?php endif; ?>
 
-                                                        <form action="<?php echo e(route('businesses.changeStatus', $business)); ?>" method="POST" style="display:inline;">
+                                                        <!-- <form action="<?php echo e(route('businesses.changeStatus', $business)); ?>" method="POST" style="display:inline;">
                                                             <?php echo csrf_field(); ?>
                                                             <?php echo method_field('PATCH'); ?>
                                                             <input type="hidden" name="status" value="inactive">
                                                             <button type="submit" class="dropdown-item">Set Inactive</button>
-                                                        </form>
+                                                        </form> -->
 
                                                         <form action="<?php echo e(route('businesses.destroy', $business)); ?>" method="POST" style="display:inhirit;">
                                                             <?php echo csrf_field(); ?>

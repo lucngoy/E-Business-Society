@@ -57,7 +57,6 @@ class PageController extends Controller
         $query = $request->input('query');        // Recherche par nom ou description
         $categoryId = $request->input('category'); // Filtrer par catégorie
         $location = $request->input('location');  // Filtrer par emplacement
-        $radius = $request->input('radius', 20);  // Rayon par défaut : 20 km
 
         // Récupérer les catégories pour le filtre
         $categories = Category::all();
@@ -85,10 +84,12 @@ class PageController extends Controller
         // Pagination pour les résultats
         $businesses = $businesses->latest()->paginate(10)->withQueryString();
 
-        // Récupérer les 6 catégories les plus populaires pour d'autres parties de la vue
-        $topCategories = Category::withCount('businesses')
-            ->orderByDesc('businesses_count')
-            ->take(6)
+        // Récupère les 6 catégories les plus populaires (par nombre d'entreprises approuvées)
+        $topCategories = Category::withCount(['businesses' => function ($query) {
+            $query->where('status', 'approved');
+        }])
+            ->orderByDesc('businesses_count') // Tri par le nombre d'entreprises approuvées
+            ->take(6) // Limite à 6 résultats
             ->get();
 
         // Retourner la vue avec les données
