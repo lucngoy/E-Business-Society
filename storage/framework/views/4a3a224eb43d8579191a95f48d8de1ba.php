@@ -26,7 +26,7 @@
                           <div class="col-lg-12 col-xl-3 no-sm-border border-right">
                             <div class="wrap-icon">
                                 <span class="icon icon-room"></span>
-                                <input type="text" class="form-control" name="location" placeholder="Search by location">
+                                <input type="text" class="form-control" name="location" placeholder="Search by adress">
                             </div>
                           </div>
 
