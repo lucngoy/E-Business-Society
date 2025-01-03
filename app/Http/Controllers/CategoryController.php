@@ -27,7 +27,6 @@ class CategoryController extends Controller
             ->orWhere('category_name', 'like', "%{$search}%")
             ->paginate(10)
             ->onEachSide(2);
-        // dd($categories);
 
         // Total des notifications
         $totalNotifications = $user->unreadNotifications()->count();
@@ -41,12 +40,15 @@ class CategoryController extends Controller
     {
         $user = Auth::user();
 
+        // Total des notifications
+        $totalNotifications = $user->unreadNotifications()->count();
+
         // Vérifiez si un utilisateur est connecté
         if (!$user) {
             return redirect()->route('login')->with('error', 'Please log in to access this page.');
         }
 
-        return view('dashboard.categories.edit', compact('category'));
+        return view('dashboard.categories.edit', compact('category', 'totalNotifications'));
     }
 
     // Affiche le formulaire de création d'une nouvelle Category

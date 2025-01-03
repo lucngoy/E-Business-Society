@@ -60,9 +60,9 @@
                                             <h6 class="fw-semibold mb-0">Email</h6>
                                         </th>
 
-                                        <th class="border-bottom-0">
+                                        <!-- <th class="border-bottom-0">
                                             <h6 class="fw-semibold mb-0">Businesses</h6>
-                                        </th>
+                                        </th> -->
 
                                         <th class="border-bottom-0">
                                             <h6 class="fw-semibold mb-0">Actions</h6>
@@ -89,12 +89,12 @@
                                                     <p class="mb-0 fw-normal">{{ $user->email }}</p>
                                                 </td>
 
-                                                <td class="border-bottom-0">
+                                                <!-- <td class="border-bottom-0">
                                                     <a href="" class="mb-0 fw-normal">Google</a>,
                                                     <a href="" class="mb-0 fw-normal">Facebook</a>,
                                                     <a href="" class="mb-0 fw-normal">Whatsapp</a>,
                                                     <a href="" class="mb-0 fw-normal">Pizza Pizza...</a>
-                                                </td>
+                                                </td> -->
 
                                                 <td class="border-bottom-0">
                                                     <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirmDeletion(event);">
