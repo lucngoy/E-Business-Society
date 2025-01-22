@@ -100,7 +100,7 @@ Contributions are welcome!
 
 ## 📧 **Contact**  
 For questions or suggestions, feel free to reach out:  
-- **Email**: [your-email@example.com](mailto:lucbanze.lb@gmail.com)  
-- **GitHub**: [github.com/username](https://github.com/lucngoy)
+- **Email**: [lucbanze.lb@gmail@example.com](mailto:lucbanze.lb@gmail.com)  
+- **GitHub**: [github.com/lucngoy](https://github.com/lucngoy)
 
 ---
